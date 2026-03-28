@@ -121,12 +121,6 @@ module "ssh_security_group" {
   description = "Security group for SSH"
   vpc_id      = module.vpc.vpc_id
   ingress_rules = [
-    # {
-    #     cidr_ipv4     = "0.0.0.0/0"
-    #     from_port     = 80
-    #     ip_protocol   = "tcp"
-    #     to_port       = 80
-    # },
     {
       cidr_ipv4   = "0.0.0.0/0"
       from_port   = 22
