@@ -122,7 +122,7 @@ resource "aws_iam_role" "ec2_role" {
   })
 }
 
-// Add session manager to role.
+// Add session manager policy to role.
 resource "aws_iam_role_policy_attachment" "ssm" {
   role       = aws_iam_role.ec2_role.name
   policy_arn = var.ssm_policy_arn
