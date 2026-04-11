@@ -116,7 +116,7 @@ resource "aws_instance" "server" {
 
 // When we create a normal key on aws and attach it to an ec2, we need to download the pem key file in order for us to be able to ssh into the ec2 instance.
 
-// When we use terraform to create the key and attach it to an ec2 instance, we are asking terraform to upload our public idrsa file on the ec2 instance so that we can use our computer's secret key to communicate with the remote ec2 instance. This means our computer has our private key and the ec2 instance has our public so which makes communication aka ssh possible. It is the same logic as uploading our idrsa public key to github/gitlab and then using our private key to communicate with the remote server (through ssh).
+// When we use terraform to create the key and attach it to an ec2 instance, we are asking terraform to upload our public idrsa file on the ec2 instance so that we can use our computer's secret key to communicate with the remote ec2 instance (through terraform or just us with simple ssh). This means our computer has our private key and the ec2 instance has our public so which makes communication aka ssh possible. It is the same logic as uploading our idrsa public key to github/gitlab and then using our private key to communicate with the remote server (through ssh).
 
 // Terraform will add the public key in the ec2 instance on this location:  ~/.ssh/authorized_keys.
 
