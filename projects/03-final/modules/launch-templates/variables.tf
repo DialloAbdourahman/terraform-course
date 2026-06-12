@@ -26,11 +26,9 @@ variable "user_data" {
 variable "associate_public_ip_address" {
   description = "Whether to associate a public IP address"
   type        = bool
-  default     = true
 }
 
 variable "tag_name" {
   description = "Name tag for instances launched from this template"
   type        = string
-  default     = "app-instance"
 }

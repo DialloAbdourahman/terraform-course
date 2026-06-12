@@ -145,6 +145,8 @@ module "auth_service_launch_template" {
   security_group_ids = [module.http_ssh_security_group.security_group_id]
   user_data          = base64encode(file("user_data/auth_service_user_data.sh"))
   template_name      = "auth-service-launch-template"
+  associate_public_ip_address = true
+  tag_name="auth-app-instance"
 }
 
 module "main_service_launch_template" {
@@ -155,6 +157,8 @@ module "main_service_launch_template" {
   security_group_ids = [module.http_ssh_security_group.security_group_id]
   user_data          = base64encode(file("user_data/main_service_user_data.sh"))
   template_name      = "main-service-launch-template"
+  associate_public_ip_address = true
+  tag_name = "main-app-instance"
 }
 
 module "notification_service_launch_template" {
@@ -165,6 +169,8 @@ module "notification_service_launch_template" {
   security_group_ids = [module.http_ssh_security_group.security_group_id]
   user_data          = base64encode(file("user_data/notification_service_user_data.sh"))
   template_name      = "notification-service-launch-template"
+  associate_public_ip_address = true
+  tag_name = "notification-app-instance"
 }
 
 // Target groups
@@ -204,8 +210,8 @@ module "auth_service_auto_scaling_group" {
 
   asg_name           = terraform.workspace == "dev" ? "dev-auth-service-auto-scaling-group" : "prod-auth-service-auto-scaling-group"
   max_size           = 5
-  min_size           = 2
-  desired_capacity   = 3
+  min_size           = 1
+  desired_capacity   = 1
   launch_template_id = module.auth_service_launch_template.launch_template_id
   subnet_ids = [
     module.public_subnet_az1.subnet_id,
@@ -223,8 +229,8 @@ module "main_service_auto_scaling_group" {
 
   asg_name           = terraform.workspace == "dev" ? "dev-main-service-auto-scaling-group" : "prod-main-service-auto-scaling-group"
   max_size           = 5
-  min_size           = 2
-  desired_capacity   = 3
+  min_size           = 1
+  desired_capacity   = 1
   launch_template_id = module.main_service_launch_template.launch_template_id
   subnet_ids = [
     module.public_subnet_az1.subnet_id,
@@ -242,8 +248,8 @@ module "notification_service_auto_scaling_group" {
 
   asg_name           = terraform.workspace == "dev" ? "dev-notification-service-auto-scaling-group" : "prod-notification-service-auto-scaling-group"
   max_size           = 5
-  min_size           = 2
-  desired_capacity   = 3
+  min_size           = 1
+  desired_capacity   = 1
   launch_template_id = module.notification_service_launch_template.launch_template_id
   subnet_ids = [
     module.public_subnet_az1.subnet_id,
@@ -311,24 +317,24 @@ module "instance_profile" {
   role_name = module.ec2_role.role_name
 }
 
-module "web_server_in_private_subnet" {
-  source = "./modules/ec2"
+# module "web_server_in_private_subnet" {
+#   source = "./modules/ec2"
 
-  ami                  = var.ubuntu_ami_id
-  instance_type        = var.dev_instance_type
-  subnet_id            = module.private_subnet_az1.subnet_id
-  key_name             = var.ec2_key_name
-  security_group_ids   = [module.http_ssh_security_group.security_group_id]
-  iam_instance_profile = module.instance_profile.instance_profile_name
-  name                 = "vault-server"
+#   ami                  = var.ubuntu_ami_id
+#   instance_type        = var.dev_instance_type
+#   subnet_id            = module.private_subnet_az1.subnet_id
+#   key_name             = var.ec2_key_name
+#   security_group_ids   = [module.http_ssh_security_group.security_group_id]
+#   iam_instance_profile = module.instance_profile.instance_profile_name
+#   name                 = "vault-server"
 
-  // Enable ssm agent.
-  user_data = <<-EOF
-              #!/bin/bash
-              set -e
+#   // Enable ssm agent.
+#   user_data = <<-EOF
+#               #!/bin/bash
+#               set -e
 
-              systemctl enable snap.amazon-ssm-agent.amazon-ssm-agent.service
-              systemctl start snap.amazon-ssm-agent.amazon-ssm-agent.service
-              EOF   
-}
+#               systemctl enable snap.amazon-ssm-agent.amazon-ssm-agent.service
+#               systemctl start snap.amazon-ssm-agent.amazon-ssm-agent.service
+#               EOF   
+# }
 
